@@ -17,10 +17,10 @@
           extend: {
             colors: {
               brand: {
-                primary: '#4a403a', // Warm Taupe/Brown
-                secondary: '#ffffff', // Pure White
-                accent: '#d99a2a', // Warm Mustard/Orange
-                beige: '#f5f2eb', // Soft Background
+                primary: '#4a403a',
+                secondary: '#ffffff',
+                accent: '#d99a2a',
+                beige: '#f5f2eb',
                 dark: '#1c1917',
               }
             },
@@ -35,88 +35,40 @@
     </script>
     
     <style>
-      /* Custom scrollbar for premium feel */
-      ::-webkit-scrollbar {
-        width: 8px;
-      }
-      ::-webkit-scrollbar-track {
-        background: #f5f2eb;
-      }
-      ::-webkit-scrollbar-thumb {
-        background: #d6d3ce;
-        border-radius: 4px;
-      }
-      ::-webkit-scrollbar-thumb:hover {
-        background: #4a403a;
-      }
+      ::-webkit-scrollbar { width: 8px; }
+      ::-webkit-scrollbar-track { background: #f5f2eb; }
+      ::-webkit-scrollbar-thumb { background: #d6d3ce; border-radius: 4px; }
+      ::-webkit-scrollbar-thumb:hover { background: #4a403a; }
     </style>
 
-    <script type="importmap">
-    {
-      "imports": {
-        "react": "https://esm.sh/react@18.2.0",
-        "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
-        "lucide-react": "https://esm.sh/lucide-react@0.344.0",
-        "framer-motion": "https://esm.sh/framer-motion@11.0.8"
-      }
-    }
-    </script>
-
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
+    
+    <script src="https://unpkg.com/lucide-react@0.344.0/dist/umd/lucide-react.js"></script>
   </head>
   <body>
     <div id="root"></div>
 
-    <script type="text/babel" data-type="module" data-presets="react,typescript">
-      import React, { useState, useEffect, useRef, FormEvent } from 'react';
-      import ReactDOM from 'react-dom/client';
-      import { motion, useInView, useAnimation } from 'framer-motion';
-      import { 
+    <script type="text/babel">
+      // --- GLOBALS & SETUP ---
+      const { useState, useEffect, useRef } = React;
+      const { motion, useInView, useAnimation } = window.Motion;
+      
+      // Lucide Icons destructuring from global object
+      const { 
         Menu, X, Phone, ArrowRight, CheckCircle2, 
         PenTool, Home, Coffee, ArrowUpRight, 
         MessageSquare, Hammer, Star, Instagram, 
         Mail, Quote, MapPin, Facebook, MessageCircle 
-      } from 'lucide-react';
+      } = window.lucideReact;
 
-      // --- Types ---
-
-      interface Project {
-        id: number;
-        title: string;
-        category: 'Residential' | 'Hospitality' | 'Commercial';
-        location: string;
-        image: string;
-      }
-
-      interface Service {
-        id: number;
-        title: string;
-        description: string;
-        icon: any; 
-      }
-
-      interface Testimonial {
-        id: number;
-        name: string;
-        location: string;
-        text: string;
-      }
-
-      interface NavLink {
-        label: string;
-        href: string;
-      }
-
-      // --- Components ---
+      // --- COMPONENTS ---
 
       // Reveal Component
-      interface RevealProps {
-        children: React.ReactNode;
-        width?: "fit-content" | "100%";
-        delay?: number;
-      }
-
-      const Reveal: React.FC<RevealProps> = ({ children, width = "100%", delay = 0.25 }) => {
+      const Reveal = ({ children, width = "100%", delay = 0.25 }) => {
         const ref = useRef(null);
         const isInView = useInView(ref, { once: true });
         const mainControls = useAnimation();
@@ -145,7 +97,7 @@
       };
 
       // Navbar Component
-      const navLinks: NavLink[] = [
+      const navLinks = [
         { label: 'Home', href: '#home' },
         { label: 'Services', href: '#services' },
         { label: 'Projects', href: '#projects' },
@@ -154,7 +106,7 @@
         { label: 'Testimonials', href: '#testimonials' },
       ];
 
-      const Navbar: React.FC = () => {
+      const Navbar = () => {
         const [isOpen, setIsOpen] = useState(false);
         const [scrolled, setScrolled] = useState(false);
 
@@ -173,7 +125,6 @@
             }`}
           >
             <div className="container mx-auto px-6 flex justify-between items-center">
-              {/* Logo Area */}
               <a href="#" className="flex items-center gap-3 group">
                 <div className="w-12 h-12 rounded-full bg-brand-primary flex items-center justify-center text-white font-serif text-xl border-2 border-brand-accent transition-transform group-hover:scale-105">
                   VA
@@ -184,7 +135,6 @@
                 </div>
               </a>
 
-              {/* Desktop Menu */}
               <div className="hidden lg:flex items-center gap-8">
                 {navLinks.map((link) => (
                   <a
@@ -209,7 +159,6 @@
                 </a>
               </div>
 
-              {/* Mobile Toggle */}
               <button
                 onClick={() => setIsOpen(!isOpen)}
                 className={`lg:hidden p-2 rounded-full transition-colors ${
@@ -220,7 +169,6 @@
               </button>
             </div>
 
-            {/* Mobile Menu Overlay */}
             <div
               className={`fixed inset-0 bg-brand-primary z-40 transition-transform duration-500 lg:hidden ${
                 isOpen ? 'translate-x-0' : 'translate-x-full'
@@ -258,8 +206,8 @@
         );
       };
 
-      // --- MOVED UP: StatsCard (Must be defined before Hero uses it) ---
-      const StatsCard = ({ label, value }: { label: string, value: string }) => (
+      // StatsCard Component
+      const StatsCard = ({ label, value }) => (
           <div className="bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-xl w-48 hover:bg-white/20 transition-colors">
               <h3 className="text-brand-accent text-3xl font-serif font-bold">{value}</h3>
               <p className="text-stone-200 text-sm font-light">{label}</p>
@@ -267,17 +215,15 @@
       );
 
       // Hero Component
-      const Hero: React.FC = () => {
+      const Hero = () => {
         return (
           <section id="home" className="relative h-screen min-h-[700px] flex items-center justify-center overflow-hidden">
-            {/* Background Image */}
             <div 
               className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat bg-fixed"
               style={{
-                backgroundImage: 'url("https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1974&q=80")' // Modern luxury living room
+                backgroundImage: 'url("https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1974&q=80")'
               }}
             >
-              {/* Dark Gradient Overlay */}
               <div className="absolute inset-0 bg-gradient-to-r from-brand-dark/90 via-brand-dark/50 to-transparent" />
             </div>
 
@@ -322,7 +268,6 @@
                 </Reveal>
               </div>
 
-              {/* Floating Stats */}
               <div className="hidden lg:flex absolute bottom-20 right-6 flex-col gap-4">
                   <StatsCard label="Projects Completed" value="10+" />
                   <StatsCard label="Years Experience" value="5+" />
@@ -333,7 +278,7 @@
       };
 
       // Services Component
-      const servicesData: Service[] = [
+      const servicesData = [
         {
           id: 1,
           title: "Architecture",
@@ -354,7 +299,7 @@
         }
       ];
 
-      const Services: React.FC = () => {
+      const Services = () => {
         return (
           <section id="services" className="py-24 bg-brand-beige">
             <div className="container mx-auto px-6">
@@ -387,7 +332,7 @@
       };
 
       // Projects Component
-      const projectsData: Project[] = [
+      const projectsData = [
         {
           id: 1,
           title: "The Oberoi Residence",
@@ -432,8 +377,8 @@
         }
       ];
 
-      const Projects: React.FC = () => {
-        const [filter, setFilter] = useState<string>('All');
+      const Projects = () => {
+        const [filter, setFilter] = useState('All');
         const filters = ['All', 'Residential', 'Hospitality', 'Commercial'];
 
         const filteredProjects = filter === 'All' 
@@ -479,7 +424,6 @@
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                       />
                       
-                      {/* Overlay */}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-8">
                         <span className="text-brand-accent text-xs font-bold uppercase tracking-wider mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-100">
                           {project.category} • {project.location}
@@ -528,7 +472,7 @@
         }
       ];
 
-      const Process: React.FC = () => {
+      const Process = () => {
         return (
           <section id="process" className="py-24 bg-brand-primary text-white">
             <div className="container mx-auto px-6">
@@ -540,7 +484,6 @@
               </div>
 
               <div className="relative">
-                {/* Connecting Line (Desktop) */}
                 <div className="hidden md:block absolute top-12 left-0 w-full h-0.5 bg-brand-accent/30 -z-0"></div>
 
                 <div className="grid md:grid-cols-4 gap-10">
@@ -565,13 +508,12 @@
       };
 
       // Founder Component
-      const Founder: React.FC = () => {
+      const Founder = () => {
         return (
           <section id="founder" className="py-24 bg-brand-beige overflow-hidden">
             <div className="container mx-auto px-6">
               <div className="flex flex-col lg:flex-row items-center gap-16">
                 
-                {/* Image Side */}
                 <div className="w-full lg:w-1/2 relative">
                   <Reveal>
                     <div className="relative z-10 rounded-2xl overflow-hidden shadow-2xl aspect-[4/5]">
@@ -581,13 +523,11 @@
                         className="w-full h-full object-cover"
                       />
                     </div>
-                    {/* Decorative elements */}
                     <div className="absolute -bottom-6 -right-6 w-full h-full border-2 border-brand-accent/30 rounded-2xl z-0"></div>
                     <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-accent/10 rounded-full blur-3xl"></div>
                   </Reveal>
                 </div>
 
-                {/* Text Side */}
                 <div className="w-full lg:w-1/2">
                   <Reveal delay={0.2}>
                     <div className="inline-block px-3 py-1 bg-brand-primary text-white text-xs font-bold uppercase tracking-wider mb-4 rounded-md">
@@ -630,7 +570,7 @@
       };
 
       // Testimonials Component
-      const reviewsData: Testimonial[] = [
+      const reviewsData = [
         {
           id: 1,
           name: "Priya Sharma",
@@ -651,7 +591,7 @@
         }
       ];
 
-      const Testimonials: React.FC = () => {
+      const Testimonials = () => {
         return (
           <section id="testimonials" className="py-24 bg-white relative">
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-stone-200 to-transparent"></div>
@@ -696,7 +636,7 @@
         "https://images.unsplash.com/photo-1615873968403-89e068629265?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
       ];
 
-      const InstagramFeed: React.FC = () => {
+      const InstagramFeed = () => {
         return (
           <section className="py-24 bg-brand-beige">
             <div className="container mx-auto px-6 text-center">
@@ -742,22 +682,19 @@
       };
 
       // Contact Component
-      const Contact: React.FC = () => {
-        
-        const handleSubmit = (e: FormEvent) => {
+      const Contact = () => {
+        const handleSubmit = (e) => {
           e.preventDefault();
           alert("Thank you! We will get back to you shortly.");
         };
 
         return (
           <section id="contact" className="py-24 bg-brand-primary relative overflow-hidden">
-            {/* Background Decor */}
             <div className="absolute top-0 right-0 w-1/3 h-full bg-white/5 skew-x-12 pointer-events-none"></div>
 
             <div className="container mx-auto px-6 relative z-10">
               <div className="flex flex-col lg:flex-row gap-16">
                 
-                {/* Form Side */}
                 <div className="w-full lg:w-3/5 bg-white rounded-3xl p-8 md:p-12 shadow-2xl">
                   <Reveal>
                     <h2 className="font-serif text-3xl md:text-4xl text-brand-primary mb-2">Let's Design Your Space</h2>
@@ -823,7 +760,6 @@
                   </Reveal>
                 </div>
 
-                {/* Info Side */}
                 <div className="w-full lg:w-2/5 text-white flex flex-col justify-center">
                   <Reveal delay={0.2}>
                     <h2 className="font-serif text-3xl mb-8">Get in Touch</h2>
@@ -880,13 +816,12 @@
       };
 
       // Footer Component
-      const Footer: React.FC = () => {
+      const Footer = () => {
         return (
           <footer className="bg-brand-dark text-white pt-16 pb-8 border-t border-white/5">
             <div className="container mx-auto px-6">
               <div className="flex flex-col md:flex-row justify-between items-center gap-8 mb-12">
                 
-                {/* Brand */}
                 <div className="text-center md:text-left">
                   <div className="font-serif text-2xl font-bold mb-2 flex items-center justify-center md:justify-start gap-2">
                       <div className="w-8 h-8 rounded-full bg-white text-brand-primary flex items-center justify-center text-xs">VA</div>
@@ -895,7 +830,6 @@
                   <p className="text-stone-400 text-sm">Bringing charm to modern homes.</p>
                 </div>
 
-                {/* Links */}
                 <div className="flex flex-wrap justify-center gap-8">
                   {['Home', 'Services', 'Projects', 'Process', 'Founder', 'Contact'].map(link => (
                       <a 
@@ -908,7 +842,6 @@
                   ))}
                 </div>
 
-                {/* Social */}
                 <div className="flex gap-4">
                   <a href="https://instagram.com" className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center hover:bg-white hover:text-brand-dark transition-all">
                       <Instagram size={18} />
@@ -949,15 +882,8 @@
       }
 
       // Main Render
-      const rootElement = document.getElementById('root');
-      if (rootElement) {
-        const root = ReactDOM.createRoot(rootElement);
-        root.render(
-          <React.StrictMode>
-            <App />
-          </React.StrictMode>
-        );
-      }
+      const root = ReactDOM.createRoot(document.getElementById('root'));
+      root.render(<App />);
     </script>
   </body>
 </html>
